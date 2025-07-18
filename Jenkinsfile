@@ -2,6 +2,7 @@ pipeline {
   agent {
     node {
       label 'Python' // ou ton label d’agent personnalisé
+    }
   }
 
   environment {
