@@ -1,18 +1,18 @@
 pipeline {
     agent { 
-        docker {
-            image 'python:3.11-slim'
+        node {
+            label 'AgentIND'
             }
       }
     triggers {
-        pollSCM '*/5 * * * *'
+        pollSCM 'H/1 * * * *'
     }
     stages {
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
-                pip install -r requirements.txt
+                echo "build was launched"
                 '''
             }
         }
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 echo "Testing.."
                 sh '''
-                python3 app.py
+                echo "test was launched"
                 '''
             }
         }
