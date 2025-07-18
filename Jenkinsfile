@@ -1,7 +1,7 @@
 pipeline {
     agent { 
-        node {
-            label 'AgentIND'
+        docker {
+            image 'python:3.11-slim'
             }
       }
     triggers {
