@@ -5,14 +5,14 @@ pipeline {
             }
       }
     triggers {
-        pollSCM 'H/1 * * * *'
+        pollSCM 'M/1 * * * *'
     }
     stages {
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
-                echo "build was launched"
+                python3 --version
                 '''
             }
         }
