@@ -1,28 +1,27 @@
 pipeline {
-    agent { 
-        node {
-            label 'AgentIND'
-            }
+  agent {
+    label 'docker-agent' // ou ton label d’agent personnalisé
+  }
+
+  environment {
+    FLASK_APP = 'app.py'
+    FLASK_RUN_PORT = '5000'
+  }
+
+  stages {
+    stage('Install Dependencies') {
+      steps {
+        sh 'python3 -m pip install --upgrade pip'
+        sh 'pip3 install -r requirements.txt' // ou `pip3 install -r requirements.txt`
       }
-    triggers {
-        pollSCM 'H/1 * * * *'
     }
-    stages {
-        stage('Build') {
-            steps {
-                echo "Building.."
-                sh '''
-                apt install -y python3
-                '''
-            }
-        }
-        stage('Test') {
-            steps {
-                echo "Testing.."
-                sh '''
-                echo "test was launched"
-                '''
-            }
-        }
+
+    stage('Run Flask App') {
+      steps {
+        sh 'python3 app.py &'
+        sh 'sleep 3'
+        sh 'curl -s http://localhost:5000 || true'  // test simple
+      }
     }
+  }
 }
