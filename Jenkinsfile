@@ -1,6 +1,7 @@
 pipeline {
   agent {
-    label 'docker-agent' // ou ton label d’agent personnalisé
+    node {
+    label 'Python' // ou ton label d’agent personnalisé
   }
 
   environment {
