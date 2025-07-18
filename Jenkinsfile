@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo "Building.."
                 sh '''
-                APK
+                apt install -y python3
                 '''
             }
         }
