@@ -40,5 +40,14 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Docker Compose') {
+            steps {
+                script {
+                sh 'docker stop my-flask-app || true'
+                sh 'docker rm my-flask-app || true'
+                sh 'docker run -d --name my-flask-app -p 5000:5000 ${IMAGE_NAME}'
+                }
+            }
+        }
     }
 }
