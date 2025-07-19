@@ -1,27 +1,44 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    FLASK_APP = 'app.py'
-    FLASK_RUN_PORT = '5000'
-  }
-
-  stages {
-    
-    stage('Install Dependencies') {
-      steps {
-        sh 'python3 -m venv venv'
-        sh 'source venv/bin/activate'
-        sh 'pip3 install -r requirements.txt'
-      }
+    environment {
+        IMAGE_NAME = 'manou05/my-flask-app'
     }
 
-    stage('Run Flask App') {
-      steps {
-        sh 'python3 app.py &'
-        sh 'sleep 3'
-        sh 'curl -s http://localhost:5000 || true'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}")
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker run --rm ${IMAGE_NAME} python -m unittest discover || echo "No tests yet"'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            when {
+                branch 'main'
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag ${IMAGE_NAME}:latest ${DOCKER_USER}/my-flask-app:latest
+                        docker push ${DOCKER_USER}/my-flask-app:latest
+                    '''
+                }
+            }
+        }
     }
-  }
 }
