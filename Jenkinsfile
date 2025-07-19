@@ -7,12 +7,7 @@ pipeline {
   }
 
   stages {
-    stage('Clone Repository') {
-      steps {
-        git 'https://github.com/Tafitantsu/flask-exemple.git'
-      }
-    }
-
+    
     stage('Install Dependencies') {
       steps {
         sh 'pip3 install -r requirements.txt'
