@@ -22,21 +22,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
+                sh 'docker run --rm ${IMAGE_NAME} python -m unittest discover || echo "No tests yet"'
             }
         }
-
-        stage('Deploy to Docker Compose') {
+        stage('deploy') {
             steps {
-                echo 'deploy running'
                 script {
-                sh 'docker run -d --name my-flask-app -p 5000:5000 ${IMAGE_NAME}'
+                  sh "docker run -d --name my-flask-app -p 5000:5000 ${IMAGE_NAME}"
                 }
-            }
-        }
-        stage('Cleanup') {
-            steps {
-                echo 'clean up'
             }
         }
     }
