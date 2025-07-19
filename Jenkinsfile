@@ -1,9 +1,5 @@
 pipeline {
-  agent {
-    node {
-      label 'Python' // ou ton label d’agent personnalisé
-    }
-  }
+  agent any
 
   environment {
     FLASK_APP = 'app.py'
@@ -11,10 +7,15 @@ pipeline {
   }
 
   stages {
+    stage('Clone Repository') {
+      steps {
+        git 'https://github.com/Tafitantsu/flask-exemple.git'
+      }
+    }
+
     stage('Install Dependencies') {
       steps {
-        sh 'python3 -m pip install --upgrade pip'
-        sh 'pip3 install -r requirements.txt' // ou `pip3 install -r requirements.txt`
+        sh 'pip3 install -r requirements.txt'
       }
     }
 
@@ -22,7 +23,7 @@ pipeline {
       steps {
         sh 'python3 app.py &'
         sh 'sleep 3'
-        sh 'curl -s http://localhost:5000 || true'  // test simple
+        sh 'curl -s http://localhost:5000 || true'
       }
     }
   }
