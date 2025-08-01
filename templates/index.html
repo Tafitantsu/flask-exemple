@@ -1,12 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Statique en Flask</title>
-</head>
-<body>
-    <h1>Bienvenue sur ma page statique en Flask!</h1>
-    <p>Ceci est un exemple de page statique rendue par Flask.</p>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}FunGames - Accueil{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="hero-content animated fadeInUp">
+                <h1 class="display-4 fw-bold text-gradient mb-3">Bienvenue sur FunGames !</h1>
+                <p class="lead mb-4">Le site où le fun rencontre les jeux 🎮 Prêt à relever des défis et à battre des records ?</p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('games') }}" class="btn btn-primary btn-lg me-md-2 pulse-effect">
+                        <i class="fas fa-gamepad me-2"></i>Jouer maintenant
+                    </a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>En savoir plus
+                    </a>
+                </div>
+                
+                <div class="stats-pill mt-4">
+                    <div class="pill-item">
+                        <i class="fas fa-users"></i>
+                        <span>{{ visit_count }} visiteurs</span>
+                    </div>
+                    <div class="pill-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ now }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="hero-image-container animated fadeInRight">
+                <img src="{{ url_for('static', filename='images/gaming.svg') }}" alt="Gaming illustration" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quote-card mt-5 animated fadeInUp">
+    <div class="quote-content">
+        <i class="fas fa-quote-left quote-icon"></i>
+        <p class="joke-text">{{ joke }}</p>
+        <i class="fas fa-quote-right quote-icon"></i>
+    </div>
+    <button id="refreshQuote" class="btn btn-outline-primary btn-sm mt-3">
+        <i class="fas fa-sync-alt me-1"></i>Nouvelle citation
+    </button>
+</div>
+
+<div class="games-preview mt-5 pt-3">
+    <h2 class="section-title text-center mb-4">Nos mini-jeux</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="game-card animated fadeInUp">
+                <div class="game-icon">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <h3>Clicker Challenge</h3>
+                <p>Clique aussi vite que possible et bats tous les records !</p>
+                <a href="{{ url_for('games') }}#clicker" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="game-card animated fadeInUp" style="animation-delay: 0.2s">
+                <div class="game-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Jeu de Réflexe</h3>
+                <p>Teste tes réflexes et ta rapidité face au chronomètre.</p>
+                <a href="{{ url_for('games') }}#reflex" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="game-card animated fadeInUp" style="animation-delay: 0.4s">
+                <div class="game-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Memory Master</h3>
+                <p>Mémorise et reproduis les séquences pour devenir un maître.</p>
+                <a href="{{ url_for('games') }}#memory" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <a href="{{ url_for('games') }}" class="btn btn-primary">Voir tous les jeux</a>
+    </div>
+</div>
+
+{% if not session.get('username') %}
+<div class="cta-section mt-5 text-center py-4 animated fadeInUp">
+    <h3>Tu veux sauvegarder tes scores ?</h3>
+    <p>Définis ton pseudo pour enregistrer tes performances et apparaître dans les classements !</p>
+    <button class="btn btn-lg btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#usernameModal">
+        <i class="fas fa-user-plus me-2"></i>Définir mon pseudo
+    </button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('refreshQuote').addEventListener('click', function() {
+    // Animation de disparition
+    const jokeText = document.querySelector('.joke-text');
+    jokeText.classList.add('fade-out');
+    
+    // Simulation du chargement d'une nouvelle blague (dans une vraie app, ce serait un appel AJAX)
+    setTimeout(function() {
+        const jokes = [
+            "Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 == DEC 25.",
+            "Un SQL entre dans un bar, voit deux tables et leur demande : 'Je peux vous joindre ?'",
+            "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres.",
+            "La récursivité, c'est cool. Demande-moi encore ce que c'est !",
+            "Debugging : être le détective dans un roman policier où TU es le meurtrier.",
+            "Le code, c'est comme l'humour. S'il faut l'expliquer, il est mauvais.",
+            "Un programmeur est quelqu'un qui transforme le café en code.",
+            "J'ai une blague sur les pointeurs en C, mais je ne sais pas où je l'ai mise.",
+            "Quand je tape 'git push origin master', je me sens comme un Jedi."
+        ];
+        
+        // Sélection aléatoire d'une blague différente
+        let newJoke;
+        do {
+            newJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        } while (newJoke === jokeText.textContent);
+        
+        jokeText.textContent = newJoke;
+        jokeText.classList.remove('fade-out');
+        jokeText.classList.add('fade-in');
+        
+        // Jouer un son
+        playSound('click');
+    }, 500);
+});
+</script>
+{% endblock %}
