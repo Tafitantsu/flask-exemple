@@ -15,11 +15,37 @@ const TypingGame = () => {
 
   const timerIntervalRef = useRef(null);
   const inputRef = useRef(null);
+  const scoreRef = useRef(score);
+
+    useEffect(() => {
+      scoreRef.current = score;
+    }, [score]);
 
   const showNewWord = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * WORDS.length);
     setCurrentWord(WORDS[randomIndex]);
   }, []);
+    const endGame = useCallback(() => {
+    const FinalScore = scoreRef.current;
+    setGameActive(false);
+    clearInterval(timerIntervalRef.current);
+    setResult({
+      message: `Votre score final est de ${FinalScore} mots.`, 
+      type: 'success',
+      score: FinalScore
+    });
+
+    // Send score to backend
+    fetch('http://localhost:8000/api/game/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: 'typing', score: FinalScore }),
+    })
+      .then(response => response.json())
+      .then(data => console.log('Typing score saved:', data))
+      .catch(error => console.error('Error saving typing score:', error));
+
+  }, []); // Add score to dependency array
 
   const startGame = useCallback(() => {
     setScore(0);
@@ -36,34 +62,13 @@ const TypingGame = () => {
       setTimeLeft(prevTime => {
         if (prevTime - 1 <= 0) {
           clearInterval(timerIntervalRef.current);
-          endGame();
+          endGame(); // Call endGame without argument
           return 0;
         }
         return prevTime - 1;
       });
     }, 1000);
-  }, [showNewWord]);
-
-  const endGame = useCallback(() => {
-    setGameActive(false);
-    clearInterval(timerIntervalRef.current);
-    setResult({
-      message: `Votre score final est de ${score} mots.`, 
-      type: 'success',
-      score: score
-    });
-
-    // Send score to backend
-    fetch('http://localhost:8000/api/game/score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ game: 'typing', score: score }),
-    })
-      .then(response => response.json())
-      .then(data => console.log('Typing score saved:', data))
-      .catch(error => console.error('Error saving typing score:', error));
-
-  }, [score]);
+  }, [showNewWord, endGame]); // endGame is now a dependency
 
   const handleInputChange = (e) => {
     if (!gameActive) return;

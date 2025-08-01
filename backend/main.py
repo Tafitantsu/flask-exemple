@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import random
 from typing import Optional
+import json
+import os
 
 # FastAPI application instance
 app = FastAPI()
@@ -22,7 +24,9 @@ app.add_middleware(
 )
 
 from fastapi.staticfiles import StaticFiles
-import os
+
+# File path for high scores persistence
+HIGH_SCORES_FILE = "high_scores.json"
 
 # In-memory data stores
 app_stats = {
@@ -32,18 +36,39 @@ app_stats = {
 user_data = {
     "username": None
 }
-high_scores = {
+
+# Default high scores
+default_high_scores = {
     "clicker": 0,
     "reflex": 0,
     "memory": 0,
     "puzzle": 0,
     "typing": 0
 }
+
+high_scores = {}
+
 JOKES = [
     "Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 == DEC 25.",
     "Un SQL entre dans un bar, voit deux tables et leur demande : 'Je peux vous joindre ?'",
     "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres.",
 ]
+
+# Functions to load and save high scores
+def load_high_scores():
+    global high_scores
+    if os.path.exists(HIGH_SCORES_FILE):
+        with open(HIGH_SCORES_FILE, "r") as f:
+            high_scores = json.load(f)
+    else:
+        high_scores = default_high_scores.copy()
+
+def save_high_scores():
+    with open(HIGH_SCORES_FILE, "w") as f:
+        json.dump(high_scores, f)
+
+# Load high scores on startup
+load_high_scores()
 
 # API Endpoints
 @app.post("/api/visit")
@@ -81,8 +106,16 @@ async def save_score(request: Request):
     data = await request.json()
     game = data.get("game")
     score = data.get("score")
-    if game in high_scores and score > high_scores[game]:
+    print(f"DEBUG: Received score for game: {game}, score: {score}")
+    print(f"DEBUG: Current high_scores before update: {high_scores}")
+    
+    # Check if game exists in high_scores and if the new score is higher or equal (if current is 0)
+    if game in high_scores and (score > high_scores[game] or (score == 0 and high_scores[game] == 0)):
         high_scores[game] = score
+        save_high_scores() # Save to file after update
+        print(f"DEBUG: High score updated for {game} to {score}")
+    else:
+        print(f"DEBUG: Score {score} not higher than current {high_scores.get(game, 'N/A')} for {game}")
     app_stats['game_plays'] += 1
     return {"status": "success", "high_scores": high_scores}
 

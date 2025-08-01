@@ -12,13 +12,11 @@ import { AudioProvider } from './contexts/AudioProvider';
 import { UserProvider } from './contexts/UserProvider';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <BrowserRouter>
       <UserProvider>
         <AudioProvider>
           <App />
         </AudioProvider>
       </UserProvider>
-    </BrowserRouter>
-  </StrictMode>,
+    </BrowserRouter>,
 );
