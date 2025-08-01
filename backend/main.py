@@ -106,16 +106,11 @@ async def save_score(request: Request):
     data = await request.json()
     game = data.get("game")
     score = data.get("score")
-    print(f"DEBUG: Received score for game: {game}, score: {score}")
-    print(f"DEBUG: Current high_scores before update: {high_scores}")
     
     # Check if game exists in high_scores and if the new score is higher or equal (if current is 0)
     if game in high_scores and (score > high_scores[game] or (score == 0 and high_scores[game] == 0)):
         high_scores[game] = score
         save_high_scores() # Save to file after update
-        print(f"DEBUG: High score updated for {game} to {score}")
-    else:
-        print(f"DEBUG: Score {score} not higher than current {high_scores.get(game, 'N/A')} for {game}")
     app_stats['game_plays'] += 1
     return {"status": "success", "high_scores": high_scores}
 
