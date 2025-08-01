@@ -64,7 +64,7 @@ const Layout = () => {
               </li>
               <li className="nav-item">
                 <button className="nav-link btn btn-link" onClick={openUsernameModal} style={{ color: 'white' }}>
-                  <i className="fas fa-user"></i>
+                  <i className="fas fa-user"></i> {username ? username : 'Définir un pseudo'}
                 </button>
               </li>
             </ul>
@@ -123,7 +123,7 @@ const Layout = () => {
       {/* Footer */}
       <footer className="footer mt-auto py-3">
         <div className="container text-center">
-          <span>© 2024 FunGames - Tous droits réservés</span>
+          <span>© 2025 FunGames - Tous droits réservés</span>
           <div className="mt-2">
             <p>Connecté en tant que: <strong>{username || 'Visiteur'}</strong></p>
           </div>
