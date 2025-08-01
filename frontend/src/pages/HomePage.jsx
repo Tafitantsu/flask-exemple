@@ -2,27 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserProvider';
 
-// Hardcoded jokes from the original Flask application
-const JOKES = [
-  "Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 == DEC 25.",
-  "Un SQL entre dans un bar, voit deux tables et leur demande : 'Je peux vous joindre ?'",
-  "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres.",
-  "La récursivité, c'est cool. Demande-moi encore ce que c'est !",
-  "Debugging : être le détective dans un roman policier où TU es le meurtrier.",
-];
-
 const HomePage = () => {
   const { username, openUsernameModal } = useUser();
   const [stats, setStats] = useState({ visit_count: 0 });
   const [currentTime, setCurrentTime] = useState('');
-  const [joke] = useState(() => JOKES[Math.floor(Math.random() * JOKES.length)]);
+  const [joke, setJoke] = useState('');
 
   useEffect(() => {
-    // Fetch stats from the backend
-    fetch('http://localhost:8000/api/stats') // Assuming the backend runs on port 8000
+    // Increment visit count
+    fetch('http://localhost:8000/api/visit', { method: 'POST' })
+      .then(() => {
+        // Fetch stats from the backend
+        fetch('http://localhost:8000/api/stats') // Assuming the backend runs on port 8000
+          .then(response => response.json())
+          .then(data => setStats(data))
+          .catch(error => console.error('Error fetching stats:', error));
+      })
+      .catch(error => console.error('Error incrementing visit count:', error));
+
+    // Fetch a joke from the backend
+    fetch('http://localhost:8000/api/joke')
       .then(response => response.json())
-      .then(data => setStats(data))
-      .catch(error => console.error('Error fetching stats:', error));
+      .then(data => setJoke(data.joke))
+      .catch(error => console.error('Error fetching joke:', error));
 
     // Set up a timer to update the current time every second
     const timer = setInterval(() => {

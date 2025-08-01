@@ -1,15 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+import random
+from typing import Optional
 
 # FastAPI application instance
 app = FastAPI()
 
 # CORS (Cross-Origin Resource Sharing) configuration
-# This allows the frontend (running on a different port) to communicate with the backend.
 origins = [
-    "http://localhost:5173",  # Default Vite dev server port
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:3000",  # Common alternative for React dev servers
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -23,25 +24,73 @@ app.add_middleware(
 from fastapi.staticfiles import StaticFiles
 import os
 
-# In-memory data store for application statistics (to match original functionality)
+# In-memory data stores
 app_stats = {
     'visit_count': 0,
     'game_plays': 0
 }
+user_data = {
+    "username": None
+}
+high_scores = {
+    "clicker": 0,
+    "reflex": 0,
+    "memory": 0,
+    "puzzle": 0,
+    "typing": 0
+}
+JOKES = [
+    "Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 == DEC 25.",
+    "Un SQL entre dans un bar, voit deux tables et leur demande : 'Je peux vous joindre ?'",
+    "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres.",
+]
+
+# API Endpoints
+@app.post("/api/visit")
+def increment_visit_count():
+    app_stats['visit_count'] += 1
+    return {"visit_count": app_stats['visit_count']}
+
+@app.get("/api/joke")
+def get_joke():
+    return {"joke": random.choice(JOKES)}
 
 @app.get("/api/stats")
 def get_stats():
-    """
-    Endpoint to retrieve application statistics.
-    """
     return app_stats
 
-# --- Static Files Configuration ---
-# This will serve the built React app in production.
-# The path is relative to the location of this 'main.py' file.
-static_files_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+@app.get("/api/user")
+def get_user():
+    return user_data
 
-# We mount the static files directory to the root of the application.
-# The check for the directory's existence prevents errors if the frontend hasn't been built yet.
+@app.post("/api/user")
+async def set_user(request: Request):
+    data = await request.json()
+    username = data.get("username")
+    if username and username.strip():
+        user_data["username"] = username.strip()
+    return user_data
+
+@app.delete("/api/user")
+def reset_user():
+    user_data["username"] = None
+    return user_data
+
+@app.post("/api/game/score")
+async def save_score(request: Request):
+    data = await request.json()
+    game = data.get("game")
+    score = data.get("score")
+    if game in high_scores and score > high_scores[game]:
+        high_scores[game] = score
+    app_stats['game_plays'] += 1
+    return {"status": "success", "high_scores": high_scores}
+
+@app.get("/api/game/highscores")
+def get_highscores():
+    return high_scores
+
+# Static Files Configuration
+static_files_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 if os.path.exists(static_files_path):
     app.mount("/", StaticFiles(directory=static_files_path, html=True), name="static")

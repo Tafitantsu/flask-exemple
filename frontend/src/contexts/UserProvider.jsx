@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 const USER_STORAGE_KEY = 'funGamesUsername';
+const API_BASE_URL = 'http://localhost:8000/api';
 
-// Create the context
 const UserContext = createContext(null);
 
-// Custom hook to use the user context
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
@@ -14,42 +13,60 @@ export const useUser = () => {
   return context;
 };
 
-// Provider component
 export const UserProvider = ({ children }) => {
   const [username, setUsernameState] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Load username from localStorage on initial render
   useEffect(() => {
-    try {
-      const storedUsername = localStorage.getItem(USER_STORAGE_KEY);
-      if (storedUsername) {
-        setUsernameState(storedUsername);
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user`);
+        const data = await response.json();
+        if (data.username) {
+          setUsernameState(data.username);
+          localStorage.setItem(USER_STORAGE_KEY, data.username);
+        } else {
+          const storedUsername = localStorage.getItem(USER_STORAGE_KEY);
+          if (storedUsername) {
+            setUsernameState(storedUsername);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user from backend", error);
+        const storedUsername = localStorage.getItem(USER_STORAGE_KEY);
+        if (storedUsername) {
+          setUsernameState(storedUsername);
+        }
       }
-    } catch (error) {
-      console.error("Failed to read username from localStorage", error);
-    }
+    };
+    fetchUser();
   }, []);
 
-  const setUsername = useCallback((name) => {
+  const setUsername = useCallback(async (name) => {
     if (name && name.trim()) {
       const trimmedName = name.trim();
       try {
+        await fetch(`${API_BASE_URL}/user`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: trimmedName }),
+        });
         localStorage.setItem(USER_STORAGE_KEY, trimmedName);
         setUsernameState(trimmedName);
-        setIsModalOpen(false); // Close modal on successful submission
+        setIsModalOpen(false);
       } catch (error) {
-        console.error("Failed to save username to localStorage", error);
+        console.error("Failed to save username", error);
       }
     }
   }, []);
 
-  const clearUsername = useCallback(() => {
+  const clearUsername = useCallback(async () => {
     try {
+      await fetch(`${API_BASE_URL}/user`, { method: 'DELETE' });
       localStorage.removeItem(USER_STORAGE_KEY);
       setUsernameState(null);
     } catch (error) {
-      console.error("Failed to remove username from localStorage", error);
+      console.error("Failed to clear username", error);
     }
   }, []);
 
