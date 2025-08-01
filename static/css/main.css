@@ -1,0 +1,138 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fredoka+One&display=swap');
+
+/* Variables CSS */
+:root {
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --accent-color: #ff5722;
+    --background-color: #f0f2f5;
+    --text-color: #333;
+    --light-text-color: #fff;
+    --card-bg: #ffffff;
+    --border-radius: 12px;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    transition: background-color 0.3s;
+}
+
+/* --- Loader --- */
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-color);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-out;
+}
+#page-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.spinner {
+    border: 4px solid rgba(0,0,0,0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: var(--primary-color);
+    animation: spin 1s ease infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Navbar --- */
+.navbar {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    box-shadow: var(--shadow);
+    padding: 0.75rem 0;
+}
+.navbar-brand {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: var(--light-text-color) !important;
+}
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: all 0.2s;
+}
+.nav-link:hover, .nav-link.active {
+    color: var(--light-text-color) !important;
+    transform: translateY(-2px);
+}
+
+/* --- Main Content --- */
+.main-content {
+    min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4);
+}
+
+/* --- Cards --- */
+.game-card, .quote-card, .modal-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+}
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Animations --- */
+.animated {
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate3d(0, 40px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.fadeInUp {
+    animation-name: fadeInUp;
+}
+
+/* --- Audio Control --- */
+.audio-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+.btn-audio {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+/* --- Footer --- */
+.footer {
+    background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+    color: var(--light-text-color);
+}

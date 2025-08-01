@@ -219,14 +219,21 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Initialisation du graphique
 document.addEventListener('DOMContentLoaded', function() {
-    // Données fictives pour le graphique
-    const data = {
+    // --- Dynamic Chart based on LocalStorage Highscores ---
+    const highscores = getHighscores();
+    const chartData = {
         labels: ['Clicker', 'Réflexes', 'Mémoire', 'Puzzle', 'Typing'],
         datasets: [{
-            label: 'Popularité des jeux',
-            data: [65, 59, 80, 45, 56],
+            label: 'Mes Meilleurs Scores',
+            // We need to normalize scores, as some are time-based (lower is better)
+            data: [
+                highscores.clicker,
+                highscores.reflex > 0 ? (1 / highscores.reflex) * 10 : 0, // Invert and scale for visibility
+                highscores.memory,
+                highscores.puzzle > 0 ? (1 / highscores.puzzle) * 100 : 0, // Invert and scale
+                highscores.typing
+            ],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.6)',
                 'rgba(54, 162, 235, 0.6)',
@@ -245,131 +252,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }]
     };
 
-    // Configuration du graphique
-    const config = {
+    const chartConfig = {
         type: 'bar',
-        data: data,
+        data: chartData,
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    bodyFont: {
-                        family: "'Poppins', sans-serif",
-                        size: 14
-                    },
-                    titleFont: {
-                        family: "'Poppins', sans-serif",
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Poppins', sans-serif"
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Poppins', sans-serif"
+                    callbacks: {
+                        label: function(context) {
+                            const game = context.label;
+                            const originalScore = highscores[game.toLowerCase()];
+                            if (game === 'Réflexes' || game === 'Puzzle') {
+                                return `${game}: ${originalScore}s`;
+                            }
+                            return `${game}: ${originalScore}`;
                         }
                     }
                 }
             },
-            animation: {
-                duration: 2000,
-                easing: 'easeOutQuart'
-            }
+            scales: { y: { beginAtZero: true } }
         }
     };
 
-    // Création du graphique
     const ctx = document.getElementById('gamesChart').getContext('2d');
-    new Chart(ctx, config);
+    new Chart(ctx, chartConfig);
+
+    // --- Update other dynamic elements ---
     
-    // Vérifier les succès débloqués depuis localStorage
-    checkAchievements();
+    // This part can be expanded with a real achievement system using localStorage
+    const recordsCount = Object.values(highscores).filter(score => score > 0).length;
+    document.getElementById('records-count').textContent = recordsCount;
     
-    // Compteur de records
-    updateRecordsCount();
-    
-    // Événement pour réinitialiser les statistiques
+    const achievementsUnlocked = 0; // Placeholder for a future achievement system
+    document.getElementById('user-achievements').textContent = achievementsUnlocked;
+
+    // Reset button functionality
     document.getElementById('resetStats')?.addEventListener('click', function() {
-        if (confirm('Es-tu sûr de vouloir réinitialiser tes statistiques ? Cette action est irréversible.')) {
-            // Réinitialiser les statistiques locales
-            localStorage.removeItem('fungames_stats');
-            localStorage.removeItem('fungames_achievements');
-            
-            // Simuler un rechargement de la page avec une animation
-            const dashboard = document.querySelector('.dashboard-header');
-            dashboard.classList.add('fadeOutUp');
-            
-            setTimeout(() => {
-                window.location.reload();
-            }, 800);
+        if (confirm('Es-tu sûr de vouloir réinitialiser tes scores ? Cette action est irréversible.')) {
+            localStorage.removeItem('fungames_highscores');
+            window.location.reload();
         }
     });
 });
-
-// Fonction pour vérifier les succès débloqués
-function checkAchievements() {
-    // Dans une vraie application, on récupérerait ces données depuis le localStorage
-    // Pour cette démo, nous allons simuler quelques succès débloqués
-    
-    const unlockedAchievements = ['ach-first-game', 'ach-clicker-master', 'ach-all-games'];
-    
-    unlockedAchievements.forEach(id => {
-        const achievementCard = document.getElementById(id);
-        if (achievementCard) {
-            achievementCard.classList.add('unlocked');
-            achievementCard.querySelector('.achievement-icon').classList.remove('locked');
-        }
-    });
-    
-    // Mettre à jour le compteur de succès
-    document.getElementById('user-achievements').textContent = unlockedAchievements.length;
-}
-
-// Fonction pour mettre à jour le compteur de records
-function updateRecordsCount() {
-    // Simuler un compteur de records
-    // Dans une vraie application, ce serait basé sur les données réelles
-    document.getElementById('records-count').textContent = '3';
-    
-    // Mettre à jour les timestamps des records
-    const timestamps = document.querySelectorAll('.timestamp');
-    timestamps.forEach((ts, index) => {
-        // Simuler des dates différentes pour chaque record
-        const daysAgo = index * 3;
-        const date = new Date();
-        date.setDate(date.getDate() - daysAgo);
-        
-        if (index < 3) { // Simuler que seuls les 3 premiers jeux ont des records
-            ts.textContent = date.toLocaleDateString();
-        }
-    });
-    
-    // Date depuis laquelle le joueur joue
-    const playerSince = document.querySelector('.player-since');
-    if (playerSince) {
-        const date = new Date();
-        date.setDate(date.getDate() - 7); // Simuler que le joueur joue depuis une semaine
-        playerSince.textContent = date.toLocaleDateString();
-    }
-}
 </script>
 {% endblock %}
