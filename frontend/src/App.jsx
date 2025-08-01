@@ -1,8 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import HomePage from './pages/HomePage'
 
 // Placeholder pages
-const HomePage = () => <div>Home Page Content</div>;
+//const HomePage = () => <div>Home Page Content</div>;
 const GamesPage = () => <div>Games Page Content</div>;
 const AboutPage = () => <div>About Page Content</div>;
 const ContactPage = () => <div>Contact Page Content</div>;
