@@ -132,23 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startBtn.textContent = 'Rejouer';
         window.playSuccessSound(); // Or a fail sound
 
-        updateHighScore('memory', score);
-    }
-
-    async function updateHighScore(game, score) {
-        try {
-            const response = await fetch('/api/update_score', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ game, score }),
-            });
-            const data = await response.json();
-            if (data.success && data.newHighscore) {
-                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
-            }
-        } catch (error) {
-            console.error('Failed to update score:', error);
-        }
+        window.gameUtils.updateHighScore('memory', score, resultDisplay);
     }
 
     startBtn.addEventListener('click', startGame);

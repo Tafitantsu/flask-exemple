@@ -1,241 +1,39 @@
 {% extends "layout.html" %}
 
-{% block title %}FunGames - Contact{% endblock %}
+{% block title %}Contact - FunGames{% endblock %}
 
 {% block content %}
-<div class="contact-section animated fadeInUp">
-    <h1 class="text-center text-gradient mb-5">Contactez-nous</h1>
-    
-    <div class="row">
-        <div class="col-lg-6 mb-5 mb-lg-0">
-            <div class="contact-info-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-info-circle me-2"></i>Informations</h2>
+<div class="container fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h1 class="display-6">Contactez-Nous</h1>
                 </div>
-                <div class="card-body">
-                    <div class="contact-info-item">
-                        <div class="icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="details">
-                            <h3>Email</h3>
-                            <p>hello@fungames.example</p>
-                        </div>
-                    </div>
+                <div class="card-body p-4">
+                    <p class="text-center">Vous avez une question, une suggestion ou vous voulez simplement dire bonjour ? Remplissez le formulaire ci-dessous.</p>
                     
-                    <div class="contact-info-item">
-                        <div class="icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="details">
-                            <h3>Adresse</h3>
-                            <p>123 Game Street, 75000 Paris, France</p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-info-item">
-                        <div class="icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="details">
-                            <h3>Horaires</h3>
-                            <p>Lun - Ven: 9h00 - 18h00</p>
-                        </div>
-                    </div>
-                    
-                    <div class="social-media mt-4">
-                        <h3>Suivez-nous</h3>
-                        <div class="social-icons">
-                            <a href="#" class="social-icon">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="social-icon">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="social-icon">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="#" class="social-icon">
-                                <i class="fab fa-github"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-6">
-            <div class="contact-form-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-paper-plane me-2"></i>Envoyez-nous un message</h2>
-                </div>
-                <div class="card-body">
-                    <form id="contactForm" class="contact-form">
+                    <form action="#" method="POST" class="mt-4">
+                        <!-- Note: This form is for demonstration purposes and does not send data. -->
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="name" placeholder="Votre nom" required>
-                            </div>
+                            <label for="contact-name" class="form-label">Votre Nom</label>
+                            <input type="text" class="form-control" id="contact-name" required>
                         </div>
-                        
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" placeholder="Votre email" required>
-                            </div>
+                            <label for="contact-email" class="form-label">Votre Email</label>
+                            <input type="email" class="form-control" id="contact-email" required>
                         </div>
-                        
                         <div class="mb-3">
-                            <label for="subject" class="form-label">Sujet</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-heading"></i></span>
-                                <input type="text" class="form-control" id="subject" placeholder="Sujet de votre message" required>
-                            </div>
+                            <label for="contact-message" class="form-label">Votre Message</label>
+                            <textarea class="form-control" id="contact-message" rows="5" required></textarea>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-comment"></i></span>
-                                <textarea class="form-control" id="message" rows="5" placeholder="Votre message" required></textarea>
-                            </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Envoyer le Message</button>
                         </div>
-                        
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="terms" required>
-                            <label class="form-check-label" for="terms">J'accepte les termes et conditions</label>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane me-2"></i>Envoyer le message
-                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="faq-section mt-5 animated fadeInUp">
-    <h2 class="text-center mb-4">Questions fréquentes</h2>
-    <div class="accordion" id="faqAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Comment sauvegarder mes scores ?
-                </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                    Pour sauvegarder tes scores, il te suffit de définir un pseudo en cliquant sur le bouton "Définir mon pseudo" situé en bas de page. Tes scores seront alors automatiquement enregistrés dans ton navigateur.
-                </div>
-            </div>
-        </div>
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTwo">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Les jeux fonctionnent-ils sur mobile ?
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                    Oui ! Tous nos jeux sont optimisés pour fonctionner parfaitement sur les appareils mobiles. Notre design est "mobile-first", ce qui signifie que l'expérience est fluide aussi bien sur smartphone que sur tablette ou ordinateur.
-                </div>
-            </div>
-        </div>
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Comment désactiver les sons ?
-                </button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                    Tu peux facilement désactiver ou activer les sons en cliquant sur l'icône du haut-parleur située en haut à droite de l'écran. Ton choix sera mémorisé pour tes prochaines visites.
-                </div>
-            </div>
-        </div>
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingFour">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    Ajoutez-vous régulièrement de nouveaux jeux ?
-                </button>
-            </h2>
-            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                    Absolument ! Nous travaillons constamment à l'élaboration de nouveaux mini-jeux pour enrichir l'expérience FunGames. Reste à l'affût des mises à jour régulières.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Simulation d'envoi de formulaire
-    const formElements = this.elements;
-    let isValid = true;
-    
-    // Vérification simple des champs
-    for (let i = 0; i < formElements.length; i++) {
-        if (formElements[i].hasAttribute('required') && !formElements[i].value) {
-            isValid = false;
-            formElements[i].classList.add('is-invalid');
-        } else {
-            formElements[i].classList.remove('is-invalid');
-        }
-    }
-    
-    if (isValid) {
-        // Animation de chargement
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-        submitBtn.disabled = true;
-        
-        // Simuler un délai de traitement
-        setTimeout(() => {
-            // Réinitialiser le formulaire
-            this.reset();
-            
-            // Afficher un message de succès
-            const formCard = document.querySelector('.contact-form-card .card-body');
-            const successMessage = document.createElement('div');
-            successMessage.className = 'alert alert-success mt-3';
-            successMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i> Votre message a été envoyé avec succès !';
-            formCard.appendChild(successMessage);
-            
-            // Jouer un son de succès
-            playSound('success');
-            
-            // Lancer des confettis
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-            
-            // Restaurer le bouton après un délai
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                // Supprimer le message de succès après un délai
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 5000);
-            }, 1500);
-        }, 2000);
-    }
-});
-</script>
 {% endblock %}

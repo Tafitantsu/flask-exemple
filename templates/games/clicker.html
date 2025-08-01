@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.triggerConfetti();
 
         // Send score to backend
-        updateHighScore('clicker', score);
+        window.gameUtils.updateHighScore('clicker', score, resultDisplay);
     }
 
     function handleClick() {
@@ -94,25 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 clickBtn.style.transform = 'scale(1)';
             }, 100);
-        }
-    }
-
-    async function updateHighScore(game, score) {
-        try {
-            const response = await fetch('/api/update_score', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ game, score }),
-            });
-            const data = await response.json();
-            if (data.success && data.newHighscore) {
-                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
-                // Optionally, update the highscore on the main page dynamically
-            }
-        } catch (error) {
-            console.error('Failed to update score:', error);
         }
     }
 

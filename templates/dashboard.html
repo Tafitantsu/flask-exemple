@@ -1,215 +1,45 @@
 {% extends "layout.html" %}
 
-{% block title %}FunGames - Dashboard{% endblock %}
+{% block title %}Dashboard - FunGames{% endblock %}
 
 {% block content %}
-<div class="dashboard-header animated fadeInDown">
-    <h1 class="text-center text-gradient mb-4">Tableau de Bord</h1>
-    <p class="lead text-center">Consultez les statistiques et performances de FunGames</p>
-</div>
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Tableau de Bord</h1>
+        <p class="lead">Statistiques globales du site et vos records personnels.</p>
+    </div>
 
-<div class="row mb-5">
-    <div class="col-md-4 mb-4">
-        <div class="stats-card animated fadeInUp">
-            <div class="stats-icon">
-                <i class="fas fa-users"></i>
+    <!-- Global Stats -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">Visites Totales</h4>
+                    <p class="display-4 fw-bold">{{ stats.visit_count }}</p>
+                </div>
             </div>
-            <div class="stats-info">
-                <h3>Visiteurs</h3>
-                <div class="stats-value">{{ stats.visit_count }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-gamepad fa-3x text-secondary mb-3"></i>
+                    <h4 class="card-title">Parties Jouées (Total)</h4>
+                    <p class="display-4 fw-bold">{{ stats.game_plays }}</p>
+                    <small class="text-muted">(Cette fonctionnalité sera implémentée prochainement)</small>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4 mb-4">
-        <div class="stats-card animated fadeInUp" style="animation-delay: 0.2s">
-            <div class="stats-icon">
-                <i class="fas fa-gamepad"></i>
-            </div>
-            <div class="stats-info">
-                <h3>Parties Jouées</h3>
-                <div class="stats-value">{{ stats.game_plays }}</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-        <div class="stats-card animated fadeInUp" style="animation-delay: 0.4s">
-            <div class="stats-icon">
-                <i class="fas fa-trophy"></i>
-            </div>
-            <div class="stats-info">
-                <h3>Records Établis</h3>
-                <div class="stats-value" id="records-count">0</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="dashboard-card animated fadeInLeft">
-            <h3><i class="fas fa-trophy me-2"></i>Meilleurs Scores</h3>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Jeu</th>
-                            <th>Score</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="game-badge clicker">Clicker</span></td>
-                            <td>{{ stats.highscores.clicker }} clics</td>
-                            <td><span class="timestamp">-</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="game-badge reflex">Réflexes</span></td>
-                            <td>{{ stats.highscores.reflex }} sec</td>
-                            <td><span class="timestamp">-</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="game-badge memory">Mémoire</span></td>
-                            <td>Niveau {{ stats.highscores.memory }}</td>
-                            <td><span class="timestamp">-</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="game-badge puzzle">Puzzle</span></td>
-                            <td>{{ stats.highscores.puzzle }} sec</td>
-                            <td><span class="timestamp">-</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="game-badge typing">Typing</span></td>
-                            <td>{{ stats.highscores.typing }} mots</td>
-                            <td><span class="timestamp">-</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6">
-        <div class="dashboard-card animated fadeInRight">
-            <h3><i class="fas fa-chart-bar me-2"></i>Statistiques des Jeux</h3>
-            <div class="chart-container">
-                <canvas id="gamesChart"></canvas>
-            </div>
-        </div>
-        
-        <div class="dashboard-card mt-4 animated fadeInUp">
-            <h3><i class="fas fa-user me-2"></i>Profil Utilisateur</h3>
-            {% if username %}
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="user-info">
-                        <h4>{{ username }}</h4>
-                        <p>Joueur depuis <span class="player-since">aujourd'hui</span></p>
-                        <div class="user-stats">
-                            <div class="user-stat-item">
-                                <span class="stat-value">{{ stats.game_plays }}</span>
-                                <span class="stat-label">Parties</span>
-                            </div>
-                            <div class="user-stat-item">
-                                <span class="stat-value" id="user-achievements">0</span>
-                                <span class="stat-label">Succès</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary mt-3" id="resetStats">
-                            <i class="fas fa-redo-alt me-2"></i>Réinitialiser mes statistiques
-                        </button>
-                    </div>
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Connectez-vous pour voir votre profil et suivre vos statistiques personnelles.
-                    <button class="btn btn-primary btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#usernameModal">
-                        Définir mon pseudo
-                    </button>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<div class="achievements-section mt-4 animated fadeInUp">
-    <h3 class="text-center mb-4"><i class="fas fa-medal me-2"></i>Succès Débloqués</h3>
-    <div class="row">
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-first-game">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-gamepad"></i>
-                </div>
-                <h4>Premier Jeu</h4>
-                <p>Jouer à votre premier jeu</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-clicker-master">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-mouse-pointer"></i>
-                </div>
-                <h4>Clicker Master</h4>
-                <p>Atteindre 50 clics en 10 secondes</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-reflex-ninja">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <h4>Réflexes Ninja</h4>
-                <p>Réagir en moins de 0.3 secondes</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-memory-genius">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h4>Génie de la Mémoire</h4>
-                <p>Atteindre le niveau 10 au jeu de mémoire</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-puzzle-solver">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-puzzle-piece"></i>
-                </div>
-                <h4>Puzzle Master</h4>
-                <p>Résoudre un puzzle en moins de 30 secondes</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-typing-pro">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-keyboard"></i>
-                </div>
-                <h4>Dactylographe Pro</h4>
-                <p>Taper plus de 30 mots en 60 secondes</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-all-games">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-star"></i>
-                </div>
-                <h4>Explorateur</h4>
-                <p>Jouer à tous les jeux disponibles</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="achievement-card" id="ach-addict">
-                <div class="achievement-icon locked">
-                    <i class="fas fa-fire"></i>
-                </div>
-                <h4>Game Addict</h4>
-                <p>Jouer 20 parties au total</p>
+    <!-- Personal Highscores -->
+    <div class="mt-5">
+        <h2 class="text-center mb-4">Vos Records Personnels</h2>
+        <div class="card">
+            <div class="card-body">
+                <ul id="highscores-list" class="list-group list-group-flush">
+                    <!-- Les scores seront injectés ici par JavaScript -->
+                </ul>
             </div>
         </div>
     </div>
@@ -217,159 +47,33 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
 <script>
-// Initialisation du graphique
-document.addEventListener('DOMContentLoaded', function() {
-    // Données fictives pour le graphique
-    const data = {
-        labels: ['Clicker', 'Réflexes', 'Mémoire', 'Puzzle', 'Typing'],
-        datasets: [{
-            label: 'Popularité des jeux',
-            data: [65, 59, 80, 45, 56],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-                'rgba(153, 102, 255, 0.6)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
-            ],
-            borderWidth: 1
-        }]
+document.addEventListener('DOMContentLoaded', () => {
+    const highscoresList = document.getElementById('highscores-list');
+    const highScores = window.gameUtils.getHighScores();
+
+    const gameNames = {
+        clicker: 'Clicker Fou',
+        reflex: 'Jeu de Réflexe',
+        memory: 'Vitesse Cérébrale',
+        puzzle: 'Mini Puzzle',
+        typing: 'Dactylo Rapide'
     };
 
-    // Configuration du graphique
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    bodyFont: {
-                        family: "'Poppins', sans-serif",
-                        size: 14
-                    },
-                    titleFont: {
-                        family: "'Poppins', sans-serif",
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Poppins', sans-serif"
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Poppins', sans-serif"
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 2000,
-                easing: 'easeOutQuart'
-            }
+    if (Object.keys(highScores).length > 0) {
+        for (const [game, score] of Object.entries(highScores)) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                <span class="fw-bold">${gameNames[game] || game}</span>
+                <span class="badge bg-primary rounded-pill fs-6">${score}</span>
+            `;
+            highscoresList.appendChild(li);
         }
-    };
-
-    // Création du graphique
-    const ctx = document.getElementById('gamesChart').getContext('2d');
-    new Chart(ctx, config);
-    
-    // Vérifier les succès débloqués depuis localStorage
-    checkAchievements();
-    
-    // Compteur de records
-    updateRecordsCount();
-    
-    // Événement pour réinitialiser les statistiques
-    document.getElementById('resetStats')?.addEventListener('click', function() {
-        if (confirm('Es-tu sûr de vouloir réinitialiser tes statistiques ? Cette action est irréversible.')) {
-            // Réinitialiser les statistiques locales
-            localStorage.removeItem('fungames_stats');
-            localStorage.removeItem('fungames_achievements');
-            
-            // Simuler un rechargement de la page avec une animation
-            const dashboard = document.querySelector('.dashboard-header');
-            dashboard.classList.add('fadeOutUp');
-            
-            setTimeout(() => {
-                window.location.reload();
-            }, 800);
-        }
-    });
-});
-
-// Fonction pour vérifier les succès débloqués
-function checkAchievements() {
-    // Dans une vraie application, on récupérerait ces données depuis le localStorage
-    // Pour cette démo, nous allons simuler quelques succès débloqués
-    
-    const unlockedAchievements = ['ach-first-game', 'ach-clicker-master', 'ach-all-games'];
-    
-    unlockedAchievements.forEach(id => {
-        const achievementCard = document.getElementById(id);
-        if (achievementCard) {
-            achievementCard.classList.add('unlocked');
-            achievementCard.querySelector('.achievement-icon').classList.remove('locked');
-        }
-    });
-    
-    // Mettre à jour le compteur de succès
-    document.getElementById('user-achievements').textContent = unlockedAchievements.length;
-}
-
-// Fonction pour mettre à jour le compteur de records
-function updateRecordsCount() {
-    // Simuler un compteur de records
-    // Dans une vraie application, ce serait basé sur les données réelles
-    document.getElementById('records-count').textContent = '3';
-    
-    // Mettre à jour les timestamps des records
-    const timestamps = document.querySelectorAll('.timestamp');
-    timestamps.forEach((ts, index) => {
-        // Simuler des dates différentes pour chaque record
-        const daysAgo = index * 3;
-        const date = new Date();
-        date.setDate(date.getDate() - daysAgo);
-        
-        if (index < 3) { // Simuler que seuls les 3 premiers jeux ont des records
-            ts.textContent = date.toLocaleDateString();
-        }
-    });
-    
-    // Date depuis laquelle le joueur joue
-    const playerSince = document.querySelector('.player-since');
-    if (playerSince) {
-        const date = new Date();
-        date.setDate(date.getDate() - 7); // Simuler que le joueur joue depuis une semaine
-        playerSince.textContent = date.toLocaleDateString();
+    } else {
+        highscoresList.innerHTML = '<li class="list-group-item text-center">Vous n\'avez pas encore de scores enregistrés. Allez jouer !</li>';
     }
-}
+});
 </script>
 {% endblock %}

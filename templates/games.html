@@ -51,7 +51,7 @@
                 <i class="fas fa-mouse-pointer"></i>
                 <h3>Clicker Fou</h3>
                 <p>Clique le plus vite possible !</p>
-                <p class="text-muted">Highscore: {{ highscores.clicker }}</p>
+                <p class="text-muted">Highscore: 0</p>
             </div>
         </div>
         <!-- Reflex Game -->
@@ -60,7 +60,7 @@
                 <i class="fas fa-bolt"></i>
                 <h3>Jeu de Réflexe</h3>
                 <p>Appuie au bon moment.</p>
-                 <p class="text-muted">Highscore: {{ highscores.reflex }}</p>
+                 <p class="text-muted">Highscore: 0</p>
             </div>
         </div>
         <!-- Memory Game -->
@@ -69,7 +69,7 @@
                 <i class="fas fa-brain"></i>
                 <h3>Vitesse Cérébrale</h3>
                 <p>Mémorise la séquence.</p>
-                 <p class="text-muted">Highscore: {{ highscores.memory }}</p>
+                 <p class="text-muted">Highscore: 0</p>
             </div>
         </div>
         <!-- Puzzle Game -->
@@ -78,7 +78,7 @@
                 <i class="fas fa-puzzle-piece"></i>
                 <h3>Mini Puzzle</h3>
                 <p>Associe les paires.</p>
-                 <p class="text-muted">Highscore: {{ highscores.puzzle }}</p>
+                 <p class="text-muted">Highscore: 0</p>
             </div>
         </div>
         <!-- Typing Game -->
@@ -87,7 +87,7 @@
                 <i class="fas fa-keyboard"></i>
                 <h3>Dactylo Rapide</h3>
                 <p>Tape les mots qui apparaissent.</p>
-                 <p class="text-muted">Highscore: {{ highscores.typing }}</p>
+                 <p class="text-muted">Highscore: 0</p>
             </div>
         </div>
         <!-- More games... -->
@@ -111,8 +111,18 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Display high scores from localStorage on load
+    const highScores = window.gameUtils.getHighScores();
+    for (const [game, score] of Object.entries(highScores)) {
+        const highscoreDisplay = document.querySelector(`.game-card[data-game='${game}'] .text-muted`);
+        if (highscoreDisplay) {
+            highscoreDisplay.textContent = `Highscore: ${score}`;
+        }
+    }
+
     const gameSelection = document.getElementById('game-selection');
     const gameContainer = document.getElementById('game-container');
     const gameContainerBody = gameContainer.querySelector('.card-body');
@@ -120,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.game-card[data-game]').forEach(card => {
         card.addEventListener('click', async () => {
             const gameId = card.dataset.game;
-            if (!gameId) return;
+            if (!gameId || card.classList.contains('disabled')) return;
 
             // Hide selection and show container
             gameSelection.style.display = 'none';
@@ -137,18 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const gameHtml = await response.text();
                 gameContainerBody.innerHTML = gameHtml;
 
-                // Add a back button to return to the selection
+                // Add a back button
                 const backButton = document.createElement('button');
                 backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Retour à la sélection';
                 backButton.className = 'btn btn-outline-secondary mt-4';
                 backButton.onclick = () => {
                     window.playClickSound();
                     gameContainer.style.display = 'none';
-                    gameSelection.style.display = 'flex';
+                    gameSelection.style.display = 'flex'; // Assuming it's a flex container
                     gameContainerBody.innerHTML = '';
                 };
-                // The game's own script will place it, but we can append the back button outside the main game div
-                gameContainerBody.appendChild(backButton);
+                
+                const gameDiv = gameContainerBody.querySelector('[id$="-game"]');
+                if (gameDiv) {
+                    gameDiv.appendChild(backButton);
+                } else {
+                    gameContainerBody.appendChild(backButton);
+                }
 
             } catch (error) {
                 gameContainerBody.innerHTML = `<div class="alert alert-danger"><strong>Erreur :</strong> ${error.message}</div>`;

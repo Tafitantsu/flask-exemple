@@ -66,26 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Score is inverse of reaction time, higher is better
             const score = Math.round(50000 / reactionTime); 
-            updateHighScore('reflex', score);
-        }
-    }
-
-    async function updateHighScore(game, score) {
-        // This function is duplicated from clicker.html, could be centralized
-        try {
-            const response = await fetch('/api/update_score', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ game, score }),
-            });
-            const data = await response.json();
-            if (data.success && data.newHighscore) {
-                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
-            }
-        } catch (error) {
-            console.error('Failed to update score:', error);
+            window.gameUtils.updateHighScore('reflex', score, resultDisplay);
         }
     }
 

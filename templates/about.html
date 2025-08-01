@@ -1,108 +1,36 @@
 {% extends "layout.html" %}
 
-{% block title %}FunGames - À propos{% endblock %}
+{% block title %}À Propos - FunGames{% endblock %}
 
 {% block content %}
-<div class="about-section animated fadeInUp">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="card about-card">
-                <div class="card-body">
-                    <h1 class="text-gradient text-center mb-4">À propos de FunGames</h1>
+<div class="container fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h1 class="display-6">À Propos de FunGames</h1>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead">FunGames est une plateforme de mini-jeux conçue pour offrir une expérience de jeu rapide, amusante et engageante directement dans votre navigateur.</p>
                     
-                    <div class="about-content">
-                        <section class="mb-5">
-                            <h2><i class="fas fa-rocket me-2"></i>Notre Mission</h2>
-                            <p class="lead">Offrir des moments de plaisir et de détente à travers des jeux accessibles et amusants.</p>
-                            <p>FunGames a été créé pour apporter un peu de légèreté et de fun dans votre journée. Que vous ayez quelques minutes de pause ou que vous cherchiez à vous divertir, nos mini-jeux sont conçus pour être immédiatement compréhensibles et addictifs.</p>
-                        </section>
-                        
-                        <section class="mb-5">
-                            <h2><i class="fas fa-gamepad me-2"></i>Nos Jeux</h2>
-                            <p>Nous proposons une variété de mini-jeux conçus pour stimuler différentes compétences :</p>
-                            <ul class="game-list">
-                                <li><span class="game-badge clicker">Clicker</span> - Teste ta vitesse de clic et ton endurance</li>
-                                <li><span class="game-badge reflex">Réflexes</span> - Mets à l'épreuve tes réflexes et ton temps de réaction</li>
-                                <li><span class="game-badge memory">Mémoire</span> - Entraîne ta mémoire avec des séquences à retenir</li>
-                                <li><span class="game-badge puzzle">Puzzle</span> - Résous des puzzles pour stimuler ta logique</li>
-                                <li><span class="game-badge typing">Typing</span> - Améliore ta vitesse de frappe au clavier</li>
-                            </ul>
-                        </section>
-                        
-                        <section class="mb-5">
-                            <h2><i class="fas fa-code me-2"></i>Technologie</h2>
-                            <p>FunGames est construit avec les technologies suivantes :</p>
-                            <div class="tech-stack">
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
-                                    <span>Python</span>
-                                </div>
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" alt="Flask">
-                                    <span>Flask</span>
-                                </div>
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5">
-                                    <span>HTML5</span>
-                                </div>
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
-                                    <span>CSS3</span>
-                                </div>
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
-                                    <span>JavaScript</span>
-                                </div>
-                                <div class="tech-item">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap">
-                                    <span>Bootstrap</span>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section>
-                            <h2><i class="fas fa-users me-2"></i>L'Équipe</h2>
-                            <p>FunGames est un projet créé avec passion pour les amateurs de jeux simples et fun. Notre équipe s'engage à offrir une expérience utilisateur optimale et à proposer régulièrement de nouveaux jeux.</p>
-                            <div class="text-center mt-4">
-                                <a href="{{ url_for('contact') }}" class="btn btn-primary">
-                                    <i class="fas fa-envelope me-2"></i>Contactez-nous
-                                </a>
-                            </div>
-                        </section>
+                    <h4 class="mt-4">Notre Mission</h4>
+                    <p>Notre objectif est de créer un espace de divertissement simple et accessible à tous. Pas de téléchargement, pas d'inscription compliquée, juste du fun instantané. Nous croyons au pouvoir des jeux pour apporter de la joie et de la compétition amicale.</p>
+
+                    <h4 class="mt-4">Technologies Utilisées</h4>
+                    <p>Ce projet a été développé avec une stack web moderne et performante :</p>
+                    <ul>
+                        <li><strong>Backend :</strong> <a href="https://flask.palletsprojects.com/" target="_blank">Flask (Python)</a> pour sa légèreté et sa flexibilité.</li>
+                        <li><strong>Frontend :</strong> HTML5, CSS3, et JavaScript (ES6+).</li>
+                        <li><strong>Framework CSS :</strong> <a href="https://getbootstrap.com/" target="_blank">Bootstrap 5</a> pour un design responsive et élégant.</li>
+                        <li><strong>Icônes :</strong> <a href="https://fontawesome.com/" target="_blank">FontAwesome</a> pour l'aspect visuel.</li>
+                        <li><strong>Animations :</strong> Des animations CSS personnalisées et la librairie <a href="https://github.com/catdad/canvas-confetti" target="_blank">Canvas Confetti</a> pour les célébrations.</li>
+                        <li><strong>Stockage Local :</strong> Les meilleurs scores sont sauvegardés directement dans votre navigateur grâce à `localStorage`.</li>
+                    </ul>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('games') }}" class="btn btn-primary">Jouer maintenant !</a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="fun-facts mt-5 animated fadeInUp">
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="fun-fact-card">
-                <div class="fun-fact-icon">
-                    <i class="fas fa-lightbulb"></i>
-                </div>
-                <h3>Le saviez-vous ?</h3>
-                <p>Les jeux simples peuvent améliorer la concentration et réduire le stress quotidien.</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="fun-fact-card">
-                <div class="fun-fact-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h3>Boost mental</h3>
-                <p>Jouer à des mini-jeux pendant 5 minutes peut stimuler votre cerveau pour les 2 heures suivantes.</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="fun-fact-card">
-                <div class="fun-fact-icon">
-                    <i class="fas fa-heart"></i>
-                </div>
-                <h3>Avec amour</h3>
-                <p>Chaque jeu sur FunGames est conçu avec soin pour maximiser le plaisir et l'engagement.</p>
             </div>
         </div>
     </div>

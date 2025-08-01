@@ -24,14 +24,7 @@ JOKES = [
 # Statistiques globales (en mémoire)
 app_stats = {
     'visit_count': 0,
-    'game_plays': 0,
-    'highscores': {
-        'clicker': 0,
-        'reflex': 0,
-        'memory': 0,
-        'puzzle': 0,
-        'typing': 0
-    }
+    'game_plays': 0
 }
 
 # Routes principales de l'application
@@ -54,8 +47,7 @@ def index():
 def games():
     """Page des jeux"""
     return render_template('games.html', 
-                          username=session.get('username', ''),
-                          highscores=app_stats['highscores'])
+                          username=session.get('username', ''))
 
 @app.route('/games/<string:game_id>')
 def game_template(game_id):
@@ -94,22 +86,6 @@ def reset_username():
     """Réinitialiser le nom d'utilisateur"""
     session.pop('username', None)
     return redirect(request.referrer or url_for('index'))
-
-@app.route('/api/update_score', methods=['POST'])
-def update_score():
-    """API pour mettre à jour les scores"""
-    if request.is_json:
-        data = request.get_json()
-        game = data.get('game')
-        score = data.get('score', 0)
-        
-        if game in app_stats['highscores'] and score > app_stats['highscores'][game]:
-            app_stats['highscores'][game] = score
-            return jsonify({'success': True, 'newHighscore': True})
-        
-        return jsonify({'success': True, 'newHighscore': False})
-    
-    return jsonify({'success': False, 'error': 'Invalid request format'})
 
 @app.route('/api/stats')
 def get_stats():
