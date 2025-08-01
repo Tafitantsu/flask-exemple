@@ -1,0 +1,95 @@
+<!-- templates/games/reflex.html -->
+<div id="reflex-game" class="text-center">
+    <h3 class="mb-3">Jeu de Réflexe</h3>
+    <p class="text-muted mb-4">Cliquez ou appuyez dès que la boîte devient verte. Ne cliquez pas trop tôt !</p>
+
+    <div id="reflex-area" style="height: 250px; background-color: #dc3545; border-radius: var(--border-radius); display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; transition: background-color 0.2s ease;">
+        <span id="reflex-text">Attendez le vert...</span>
+    </div>
+
+    <div id="reflex-result" class="mt-4"></div>
+    <button id="start-reflex-btn" class="btn btn-primary mt-3">Commencer</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('start-reflex-btn');
+    const reflexArea = document.getElementById('reflex-area');
+    const reflexText = document.getElementById('reflex-text');
+    const resultDisplay = document.getElementById('reflex-result');
+
+    let timer;
+    let startTime;
+    let gameState = 'waiting'; // waiting, ready, active, done
+
+    function startGame() {
+        resultDisplay.innerHTML = '';
+        reflexArea.style.backgroundColor = '#dc3545'; // Red
+        reflexText.textContent = 'Attendez le vert...';
+        gameState = 'ready';
+        startBtn.classList.add('d-none');
+
+        // Set a random timeout before turning green
+        const randomDelay = Math.random() * 3000 + 1000; // 1 to 4 seconds
+        timer = setTimeout(() => {
+            reflexArea.style.backgroundColor = '#28a745'; // Green
+            reflexText.textContent = 'CLIQUEZ !';
+            gameState = 'active';
+            startTime = new Date().getTime();
+        }, randomDelay);
+        
+        window.playClickSound();
+    }
+
+    function handleReflexClick() {
+        if (gameState === 'ready') {
+            // Clicked too early
+            clearTimeout(timer);
+            reflexText.textContent = 'Trop tôt ! Essayez encore.';
+            gameState = 'done';
+            startBtn.classList.remove('d-none');
+            window.playSuccessSound(); // Or a fail sound if available
+        } else if (gameState === 'active') {
+            // Successful click
+            const endTime = new Date().getTime();
+            const reactionTime = endTime - startTime;
+            
+            reflexArea.style.backgroundColor = '#0d6efd'; // Blue for result
+            reflexText.textContent = `Votre temps : ${reactionTime} ms`;
+            resultDisplay.innerHTML = `<h4 class="text-success">Super réflexe !</h4>`;
+            gameState = 'done';
+            startBtn.classList.remove('d-none');
+            startBtn.textContent = 'Rejouer';
+
+            window.playSuccessSound();
+            window.triggerConfetti();
+
+            // Score is inverse of reaction time, higher is better
+            const score = Math.round(50000 / reactionTime); 
+            updateHighScore('reflex', score);
+        }
+    }
+
+    async function updateHighScore(game, score) {
+        // This function is duplicated from clicker.html, could be centralized
+        try {
+            const response = await fetch('/api/update_score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ game, score }),
+            });
+            const data = await response.json();
+            if (data.success && data.newHighscore) {
+                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
+            }
+        } catch (error) {
+            console.error('Failed to update score:', error);
+        }
+    }
+
+    startBtn.addEventListener('click', startGame);
+    reflexArea.addEventListener('click', handleReflexClick);
+});
+</script>

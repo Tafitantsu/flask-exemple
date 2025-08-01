@@ -1,0 +1,173 @@
+<!-- templates/games/puzzle.html -->
+<style>
+    #puzzle-board {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 400px;
+        margin: 20px auto;
+        perspective: 1000px;
+    }
+    .puzzle-card {
+        width: 90px;
+        height: 90px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+        cursor: pointer;
+    }
+    .puzzle-card.is-flipped {
+        transform: rotateY(180deg);
+    }
+    .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+    }
+    .card-front {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    }
+    .card-back {
+        background-color: var(--card-bg);
+        transform: rotateY(180deg);
+        color: var(--primary-color);
+    }
+    .puzzle-card.is-matched {
+        opacity: 0.5;
+        cursor: default;
+    }
+</style>
+
+<div id="puzzle-game" class="text-center">
+    <h3 class="mb-3">Puzzle de Paires</h3>
+    <p class="text-muted mb-4">Trouvez toutes les paires d'icônes identiques.</p>
+
+    <div id="puzzle-board"></div>
+
+    <div class="mt-3">
+        <h4>Mouvements: <span id="moves-count">0</span></h4>
+    </div>
+
+    <div id="puzzle-result" class="mt-3"></div>
+    <button id="start-puzzle-btn" class="btn btn-primary mt-3">Commencer</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('start-puzzle-btn');
+    const board = document.getElementById('puzzle-board');
+    const movesDisplay = document.getElementById('moves-count');
+    const resultDisplay = document.getElementById('puzzle-result');
+
+    const icons = ['<i class="fas fa-star"></i>', '<i class="fas fa-heart"></i>', '<i class="fas fa-bolt"></i>', '<i class="fas fa-leaf"></i>', '<i class="fas fa-gem"></i>', '<i class="fas fa-moon"></i>', '<i class="fas fa-sun"></i>', '<i class="fas fa-anchor"></i>'];
+    let cards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    let gameActive = false;
+
+    function startGame() {
+        gameActive = true;
+        moves = 0;
+        matchedPairs = 0;
+        flippedCards = [];
+        movesDisplay.textContent = moves;
+        resultDisplay.innerHTML = '';
+        board.innerHTML = '';
+        startBtn.textContent = 'Rejouer';
+
+        // Create card pairs and shuffle
+        const cardIcons = [...icons, ...icons];
+        cardIcons.sort(() => 0.5 - Math.random());
+
+        // Create card elements
+        cardIcons.forEach(icon => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('puzzle-card');
+            cardElement.dataset.icon = icon;
+            cardElement.innerHTML = `
+                <div class="card-face card-front"></div>
+                <div class="card-face card-back">${icon}</div>
+            `;
+            board.appendChild(cardElement);
+            cardElement.addEventListener('click', () => handleCardClick(cardElement));
+        });
+        
+        window.playClickSound();
+    }
+
+    function handleCardClick(card) {
+        if (!gameActive || card.classList.contains('is-flipped') || flippedCards.length >= 2) {
+            return;
+        }
+
+        card.classList.add('is-flipped');
+        flippedCards.push(card);
+
+        if (flippedCards.length === 2) {
+            updateMoves();
+            checkForMatch();
+        }
+    }
+
+    function updateMoves() {
+        moves++;
+        movesDisplay.textContent = moves;
+    }
+
+    function checkForMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.icon === card2.dataset.icon) {
+            // It's a match!
+            window.playSuccessSound();
+            card1.classList.add('is-matched');
+            card2.classList.add('is-matched');
+            matchedPairs++;
+            flippedCards = [];
+            if (matchedPairs === icons.length) {
+                endGame();
+            }
+        } else {
+            // Not a match
+            setTimeout(() => {
+                card1.classList.remove('is-flipped');
+                card2.classList.remove('is-flipped');
+                flippedCards = [];
+            }, 1200);
+        }
+    }
+
+    function endGame() {
+        gameActive = false;
+        const score = Math.max(1, 1000 - (moves * 10)); // Lower moves = higher score
+        resultDisplay.innerHTML = `<h4 class="text-success">Félicitations ! Vous avez terminé en ${moves} mouvements.</h4>`;
+        window.triggerConfetti();
+        updateHighScore('puzzle', score);
+    }
+
+    async function updateHighScore(game, score) {
+        try {
+            const response = await fetch('/api/update_score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game, score }),
+            });
+            const data = await response.json();
+            if (data.success && data.newHighscore) {
+                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
+            }
+        } catch (error) {
+            console.error('Failed to update score:', error);
+        }
+    }
+
+    startBtn.addEventListener('click', startGame);
+});
+</script>

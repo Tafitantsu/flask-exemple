@@ -1,294 +1,160 @@
 {% extends "layout.html" %}
 
-{% block title %}FunGames - Jeux{% endblock %}
+{% block title %}Mini-Jeux - FunGames{% endblock %}
 
 {% block extra_css %}
-<link href="{{ url_for('static', filename='css/games.css') }}" rel="stylesheet">
+<style>
+    .game-card {
+        cursor: pointer;
+        text-align: center;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .game-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+    .game-card i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    .game-card h3 {
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    .game-card p {
+        color: #6c757d;
+    }
+    .game-container {
+        display: none; /* Hidden by default */
+        margin-top: 2rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="games-header animated fadeInDown">
-    <h1 class="display-5 fw-bold text-center text-gradient">Arcade de Mini-Jeux</h1>
-    <p class="lead text-center mb-5">Choisis ton jeu et montre ton talent ! 🎮</p>
-</div>
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">La Salle d'Arcade</h1>
+        <p class="lead">Choisis un jeu et tente de battre le meilleur score !</p>
+    </div>
 
-<div class="nav-games mb-4">
-    <ul class="nav nav-pills nav-fill">
-        <li class="nav-item">
-            <a class="nav-link active" href="#clicker" data-bs-toggle="tab">
-                <i class="fas fa-mouse-pointer"></i> Clicker
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#reflex" data-bs-toggle="tab">
-                <i class="fas fa-bolt"></i> Réflexes
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#memory" data-bs-toggle="tab">
-                <i class="fas fa-brain"></i> Mémoire
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#puzzle" data-bs-toggle="tab">
-                <i class="fas fa-puzzle-piece"></i> Puzzle
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#typing" data-bs-toggle="tab">
-                <i class="fas fa-keyboard"></i> Typing
-            </a>
-        </li>
-    </ul>
-</div>
+    <!-- Game Selection Grid -->
+    <div id="game-selection" class="row g-4">
+        <!-- Clicker Game -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card" data-game="clicker">
+                <i class="fas fa-mouse-pointer"></i>
+                <h3>Clicker Fou</h3>
+                <p>Clique le plus vite possible !</p>
+                <p class="text-muted">Highscore: {{ highscores.clicker }}</p>
+            </div>
+        </div>
+        <!-- Reflex Game -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card" data-game="reflex">
+                <i class="fas fa-bolt"></i>
+                <h3>Jeu de Réflexe</h3>
+                <p>Appuie au bon moment.</p>
+                 <p class="text-muted">Highscore: {{ highscores.reflex }}</p>
+            </div>
+        </div>
+        <!-- Memory Game -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card" data-game="memory">
+                <i class="fas fa-brain"></i>
+                <h3>Vitesse Cérébrale</h3>
+                <p>Mémorise la séquence.</p>
+                 <p class="text-muted">Highscore: {{ highscores.memory }}</p>
+            </div>
+        </div>
+        <!-- Puzzle Game -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card" data-game="puzzle">
+                <i class="fas fa-puzzle-piece"></i>
+                <h3>Mini Puzzle</h3>
+                <p>Associe les paires.</p>
+                 <p class="text-muted">Highscore: {{ highscores.puzzle }}</p>
+            </div>
+        </div>
+        <!-- Typing Game -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card" data-game="typing">
+                <i class="fas fa-keyboard"></i>
+                <h3>Dactylo Rapide</h3>
+                <p>Tape les mots qui apparaissent.</p>
+                 <p class="text-muted">Highscore: {{ highscores.typing }}</p>
+            </div>
+        </div>
+        <!-- More games... -->
+        <div class="col-md-6 col-lg-4">
+            <div class="game-card disabled" style="cursor: not-allowed; opacity: 0.6;">
+                <i class="fas fa-plus-circle"></i>
+                <h3>Bientôt...</h3>
+                <p>De nouveaux jeux arrivent !</p>
+            </div>
+        </div>
+    </div>
 
-<div class="tab-content" id="gamesContent">
-    <!-- Clicker Game -->
-    <div class="tab-pane fade show active" id="clicker">
-        <div class="game-container animated fadeIn">
-            <div class="game-header">
-                <h2>Clicker Challenge</h2>
-                <p>Clique aussi vite que possible pendant 10 secondes !</p>
-            </div>
-            <div class="game-body text-center">
-                <div class="game-stats mb-4">
-                    <div class="stat-item">
-                        <span id="clicker-counter">0</span>
-                        <label>Clics</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="clicker-timer">10</span>
-                        <label>Secondes</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="clicker-highscore">0</span>
-                        <label>Record</label>
-                    </div>
-                </div>
-                
-                <div id="clicker-game-area">
-                    <button id="clicker-btn" class="game-button">
-                        <i class="fas fa-mouse-pointer"></i>
-                        <span>CLIQUE ICI</span>
-                    </button>
-                </div>
-                
-                <div id="clicker-result" class="game-result mt-4" style="display: none;">
-                    <h3>Temps écoulé !</h3>
-                    <p>Tu as cliqué <span id="final-score">0</span> fois en 10 secondes.</p>
-                    <p id="clicker-message"></p>
-                    <button id="clicker-restart" class="btn btn-primary mt-3">Rejouer</button>
-                </div>
-            </div>
+    <!-- Container where the selected game will be loaded -->
+    <div id="game-container" class="game-container card">
+        <div class="card-body">
+            <!-- Game content will be injected here by JavaScript -->
         </div>
     </div>
-    
-    <!-- Reflex Game -->
-    <div class="tab-pane fade" id="reflex">
-        <div class="game-container animated fadeIn">
-            <div class="game-header">
-                <h2>Jeu de Réflexe</h2>
-                <p>Attends que la couleur change et clique aussi vite que possible !</p>
-            </div>
-            <div class="game-body text-center">
-                <div class="game-stats mb-4">
-                    <div class="stat-item">
-                        <span id="reflex-current">0.000</span>
-                        <label>Secondes</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="reflex-best">0.000</span>
-                        <label>Meilleur</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="reflex-avg">0.000</span>
-                        <label>Moyenne</label>
-                    </div>
-                </div>
-                
-                <div id="reflex-game-area">
-                    <div id="reflex-target" class="reflex-wait">
-                        <p id="reflex-message">Attends le changement de couleur...</p>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <button id="reflex-restart" class="btn btn-primary">Recommencer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Memory Game -->
-    <div class="tab-pane fade" id="memory">
-        <div class="game-container animated fadeIn">
-            <div class="game-header">
-                <h2>Memory Master</h2>
-                <p>Mémorise la séquence et reproduis-la correctement !</p>
-            </div>
-            <div class="game-body text-center">
-                <div class="game-stats mb-4">
-                    <div class="stat-item">
-                        <span id="memory-level">1</span>
-                        <label>Niveau</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="memory-sequence">0</span>
-                        <label>Séquence</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="memory-highscore">0</span>
-                        <label>Record</label>
-                    </div>
-                </div>
-                
-                <div id="memory-game-area">
-                    <div class="memory-grid">
-                        <div class="memory-btn" id="memory-btn-0" data-index="0"></div>
-                        <div class="memory-btn" id="memory-btn-1" data-index="1"></div>
-                        <div class="memory-btn" id="memory-btn-2" data-index="2"></div>
-                        <div class="memory-btn" id="memory-btn-3" data-index="3"></div>
-                    </div>
-                    
-                    <div id="memory-status" class="my-3">Appuie sur Démarrer pour jouer</div>
-                    
-                    <button id="memory-start" class="btn btn-primary mt-2">Démarrer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Puzzle Game -->
-    <div class="tab-pane fade" id="puzzle">
-        <div class="game-container animated fadeIn">
-            <div class="game-header">
-                <h2>Mini Puzzle</h2>
-                <p>Aligne les tuiles dans le bon ordre !</p>
-            </div>
-            <div class="game-body text-center">
-                <div class="game-stats mb-4">
-                    <div class="stat-item">
-                        <span id="puzzle-moves">0</span>
-                        <label>Mouvements</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="puzzle-timer">00:00</span>
-                        <label>Temps</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="puzzle-best">--:--</span>
-                        <label>Record</label>
-                    </div>
-                </div>
-                
-                <div id="puzzle-game-area">
-                    <div class="puzzle-grid">
-                        <!-- Les tuiles seront générées en JavaScript -->
-                    </div>
-                    
-                    <div id="puzzle-status" class="mt-3">Déplace les tuiles pour les remettre en ordre</div>
-                    
-                    <button id="puzzle-restart" class="btn btn-primary mt-3">Nouveau Puzzle</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Typing Game -->
-    <div class="tab-pane fade" id="typing">
-        <div class="game-container animated fadeIn">
-            <div class="game-header">
-                <h2>Speed Typing</h2>
-                <p>Tape les mots qui apparaissent aussi vite que possible !</p>
-            </div>
-            <div class="game-body text-center">
-                <div class="game-stats mb-4">
-                    <div class="stat-item">
-                        <span id="typing-score">0</span>
-                        <label>Score</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="typing-timer">60</span>
-                        <label>Secondes</label>
-                    </div>
-                    <div class="stat-item">
-                        <span id="typing-highscore">0</span>
-                        <label>Record</label>
-                    </div>
-                </div>
-                
-                <div id="typing-game-area">
-                    <div id="typing-word" class="typing-word">Appuie sur Démarrer</div>
-                    
-                    <div class="typing-input-container mt-4">
-                        <input type="text" id="typing-input" class="typing-input" placeholder="Tape ici..." disabled>
-                    </div>
-                    
-                    <div id="typing-status" class="mt-3">Tape les mots aussi vite que possible !</div>
-                    
-                    <button id="typing-start" class="btn btn-primary mt-3">Démarrer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Global Game Controls -->
-<div class="global-controls mt-5 text-center">
-    <div class="highscores-box animated fadeInUp">
-        <h3><i class="fas fa-trophy"></i> Meilleurs Scores</h3>
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>Jeu</th>
-                    <th>Record</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Clicker</td>
-                    <td id="hs-clicker">{{ highscores.clicker }}</td>
-                </tr>
-                <tr>
-                    <td>Réflexes</td>
-                    <td id="hs-reflex">{{ highscores.reflex }}</td>
-                </tr>
-                <tr>
-                    <td>Mémoire</td>
-                    <td id="hs-memory">{{ highscores.memory }}</td>
-                </tr>
-                <tr>
-                    <td>Puzzle</td>
-                    <td id="hs-puzzle">{{ highscores.puzzle }}</td>
-                </tr>
-                <tr>
-                    <td>Typing</td>
-                    <td id="hs-typing">{{ highscores.typing }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
-
-{% if not session.get('username') %}
-<div class="username-alert mt-4 animated fadeInUp">
-    <div class="alert alert-info d-flex align-items-center" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        <div>
-            Connecte-toi pour sauvegarder tes scores !
-            <button class="btn btn-sm btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#usernameModal">
-                Définir mon pseudo
-            </button>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/games/clicker.js') }}"></script>
-<script src="{{ url_for('static', filename='js/games/reflex.js') }}"></script>
-<script src="{{ url_for('static', filename='js/games/memory.js') }}"></script>
-<script src="{{ url_for('static', filename='js/games/puzzle.js') }}"></script>
-<script src="{{ url_for('static', filename='js/games/typing.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const gameSelection = document.getElementById('game-selection');
+    const gameContainer = document.getElementById('game-container');
+    const gameContainerBody = gameContainer.querySelector('.card-body');
+
+    document.querySelectorAll('.game-card[data-game]').forEach(card => {
+        card.addEventListener('click', async () => {
+            const gameId = card.dataset.game;
+            if (!gameId) return;
+
+            // Hide selection and show container
+            gameSelection.style.display = 'none';
+            gameContainer.style.display = 'block';
+            gameContainerBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div></div>';
+            
+            window.playClickSound();
+
+            try {
+                const response = await fetch(`/games/${gameId}`);
+                if (!response.ok) {
+                    throw new Error('Le fichier du jeu est introuvable.');
+                }
+                const gameHtml = await response.text();
+                gameContainerBody.innerHTML = gameHtml;
+
+                // Add a back button to return to the selection
+                const backButton = document.createElement('button');
+                backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Retour à la sélection';
+                backButton.className = 'btn btn-outline-secondary mt-4';
+                backButton.onclick = () => {
+                    window.playClickSound();
+                    gameContainer.style.display = 'none';
+                    gameSelection.style.display = 'flex';
+                    gameContainerBody.innerHTML = '';
+                };
+                // The game's own script will place it, but we can append the back button outside the main game div
+                gameContainerBody.appendChild(backButton);
+
+            } catch (error) {
+                gameContainerBody.innerHTML = `<div class="alert alert-danger"><strong>Erreur :</strong> ${error.message}</div>`;
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

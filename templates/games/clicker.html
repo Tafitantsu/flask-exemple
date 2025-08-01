@@ -1,0 +1,123 @@
+<!-- templates/games/clicker.html -->
+<div id="clicker-game" class="text-center">
+    <h3 class="mb-3">Clicker Fou</h3>
+    <p class="text-muted mb-4">Cliquez sur le bouton le plus vite possible en 10 secondes !</p>
+
+    <div id="game-area">
+        <button id="start-clicker-btn" class="btn btn-primary btn-lg">Commencer !</button>
+        
+        <div id="click-zone" class="d-none">
+            <button id="click-btn" class="btn btn-lg" style="background-color: var(--accent-color); color: white; width: 200px; height: 200px; border-radius: 50%; font-size: 1.5rem; transition: transform 0.1s ease;">Clique !</button>
+        </div>
+    </div>
+
+    <div id="game-stats" class="mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <h4>Temps restant</h4>
+                <p id="timer" class="fs-3 fw-bold">10s</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Score</h4>
+                <p id="score" class="fs-3 fw-bold">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="result" class="mt-4"></div>
+    <button id="restart-clicker-btn" class="btn btn-secondary mt-3 d-none">Rejouer</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('start-clicker-btn');
+    const restartBtn = document.getElementById('restart-clicker-btn');
+    const clickBtn = document.getElementById('click-btn');
+    const clickZone = document.getElementById('click-zone');
+    
+    const timerDisplay = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('score');
+    const resultDisplay = document.getElementById('result');
+
+    let score = 0;
+    let timeLeft = 10;
+    let timerInterval;
+    let gameActive = false;
+
+    function startGame() {
+        // Reset state
+        score = 0;
+        timeLeft = 10;
+        gameActive = true;
+        scoreDisplay.textContent = score;
+        timerDisplay.textContent = timeLeft + 's';
+        resultDisplay.innerHTML = '';
+        
+        // Update UI
+        startBtn.classList.add('d-none');
+        restartBtn.classList.add('d-none');
+        clickZone.classList.remove('d-none');
+
+        // Start timer
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = timeLeft + 's';
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }, 1000);
+        
+        window.playClickSound();
+    }
+
+    function endGame() {
+        clearInterval(timerInterval);
+        gameActive = false;
+        clickZone.classList.add('d-none');
+        restartBtn.classList.remove('d-none');
+
+        resultDisplay.innerHTML = `<h4 class="text-success">Temps écoulé ! Votre score final est de ${score}.</h4>`;
+        window.playSuccessSound();
+        window.triggerConfetti();
+
+        // Send score to backend
+        updateHighScore('clicker', score);
+    }
+
+    function handleClick() {
+        if (gameActive) {
+            score++;
+            scoreDisplay.textContent = score;
+            
+            // Fun little animation
+            clickBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clickBtn.style.transform = 'scale(1)';
+            }, 100);
+        }
+    }
+
+    async function updateHighScore(game, score) {
+        try {
+            const response = await fetch('/api/update_score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ game, score }),
+            });
+            const data = await response.json();
+            if (data.success && data.newHighscore) {
+                resultDisplay.innerHTML += '<p class="fw-bold text-warning">Nouveau record personnel !</p>';
+                // Optionally, update the highscore on the main page dynamically
+            }
+        } catch (error) {
+            console.error('Failed to update score:', error);
+        }
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+    clickBtn.addEventListener('click', handleClick);
+});
+</script>

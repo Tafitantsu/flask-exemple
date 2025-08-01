@@ -50,12 +50,19 @@ def index():
                           visit_count=app_stats['visit_count'],
                           username=username)
 
-@app.route('/jeux')
+@app.route('/games')
 def games():
     """Page des jeux"""
     return render_template('games.html', 
                           username=session.get('username', ''),
                           highscores=app_stats['highscores'])
+
+@app.route('/games/<string:game_id>')
+def game_template(game_id):
+    """Sert le template HTML pour un jeu spécifique."""
+    if game_id in ['clicker', 'reflex', 'memory', 'puzzle', 'typing']:
+        return render_template(f'games/{game_id}.html')
+    return "Jeu non trouvé", 404
 
 @app.route('/about')
 def about():
@@ -112,68 +119,3 @@ def get_stats():
 # Point d'entrée de l'application
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-import random
-import datetime
-
-app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Nécessaire pour les sessions
-
-# Liste de blagues/citations
-JOKES = [
-    "Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 == DEC 25.",
-    "Un SQL entre dans un bar, voit deux tables et leur demande : 'Je peux vous joindre ?'",
-    "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres.",
-    "La récursivité, c'est cool. Demande-moi encore ce que c'est !",
-    "Debugging : être le détective dans un roman policier où TU es le meurtrier."
-]
-
-# Compteur de visites (en mémoire)
-visit_count = 0
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    global visit_count
-    visit_count += 1
-    joke = random.choice(JOKES)
-    now = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-
-    # Gestion du prénom
-    name = session.get('name')
-    if request.method == 'POST' and 'name' in request.form:
-        name = request.form['name']
-        session['name'] = name
-
-    # Mini-jeu : devine le nombre
-    message = ''
-    if 'number' not in session:
-        session['number'] = random.randint(1, 20)
-        session['attempts'] = 0
-    if request.method == 'POST' and 'guess' in request.form:
-        try:
-            guess = int(request.form['guess'])
-            session['attempts'] += 1
-            if guess < session['number']:
-                message = 'Trop petit !'
-            elif guess > session['number']:
-                message = 'Trop grand !'
-            else:
-                message = f'Bravo ! Tu as trouvé en {session["attempts"]} essais.'
-                session.pop('number')
-                session.pop('attempts')
-        except ValueError:
-            message = 'Merci d’entrer un nombre valide.'
-
-    return render_template('index.html',
-                           joke=joke,
-                           now=now,
-                           visit_count=visit_count,
-                           name=name,
-                           message=message)
-
-@app.route('/reset_name')
-def reset_name():
-    session.pop('name', None)
-    return redirect(url_for('index'))
-
-if __name__ == '__main__':
-    app.run(debug=True)
