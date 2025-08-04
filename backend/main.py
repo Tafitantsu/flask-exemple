@@ -41,8 +41,6 @@ user_data = {
 default_high_scores = {
     "clicker": 0,
     "reflex": 0,
-    "memory": 0,
-    "puzzle": 0,
     "typing": 0
 }
 

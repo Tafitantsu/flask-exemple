@@ -7,8 +7,7 @@ import DashboardPage from '@pages/DashboardPage';
 import GamesPage from '@pages/GamesPage';
 import ClickerGame from '@games/ClickerGame';
 import ReflexGame from '@games/ReflexGame';
-import MemoryGame from '@games/MemoryGame';
-import PuzzleGame from '@games/PuzzleGame';
+
 import TypingGame from '@games/TypingGame';
 
 function App() {
@@ -20,8 +19,7 @@ function App() {
         <Route path="games" element={<GamesPage />} />
         <Route path="games/clicker" element={<ClickerGame />} />
         <Route path="games/reflex" element={<ReflexGame />} />
-        <Route path="games/memory" element={<MemoryGame />} />
-        <Route path="games/puzzle" element={<PuzzleGame />} />
+        
         <Route path="games/typing" element={<TypingGame />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />

@@ -5,8 +5,6 @@ const API_BASE_URL = 'http://localhost:8000/api';
 const gameNames = {
   clicker: 'Clicker Fou',
   reflex: 'Jeu de Réflexe',
-  memory: 'Vitesse Cérébrale',
-  puzzle: 'Mini Puzzle',
   typing: 'Dactylo Rapide'
 };
 
