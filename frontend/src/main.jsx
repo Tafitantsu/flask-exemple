@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 // Import Bootstrap CSS first
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Import custom styles
-import './index.css';
+import '@styles/index.css';
 
 import App from './App.jsx';
 import { AudioProvider } from './contexts/AudioProvider';

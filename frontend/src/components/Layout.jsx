@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { useUser } from '../contexts/UserProvider';
+import { useUser } from '@contexts/UserProvider';
 
 const Layout = () => {
   const { username, isModalOpen, openUsernameModal, closeUsernameModal, setUsername, clearUsername } = useUser();

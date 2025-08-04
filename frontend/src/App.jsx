@@ -1,15 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import DashboardPage from './pages/DashboardPage';
-import GamesPage from './pages/GamesPage';
-import ClickerGame from './pages/games/ClickerGame';
-import ReflexGame from './pages/games/ReflexGame';
-import MemoryGame from './pages/games/MemoryGame';
-import PuzzleGame from './pages/games/PuzzleGame';
-import TypingGame from './pages/games/TypingGame';
+import Layout from '@components/Layout';
+import HomePage from '@pages/HomePage';
+import AboutPage from '@pages/AboutPage';
+import ContactPage from '@pages/ContactPage';
+import DashboardPage from '@pages/DashboardPage';
+import GamesPage from '@pages/GamesPage';
+import ClickerGame from '@games/ClickerGame';
+import ReflexGame from '@games/ReflexGame';
+import MemoryGame from '@games/MemoryGame';
+import PuzzleGame from '@games/PuzzleGame';
+import TypingGame from '@games/TypingGame';
 
 function App() {
   return (

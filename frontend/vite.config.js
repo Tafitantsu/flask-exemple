@@ -28,7 +28,14 @@ export default defineConfig({
       },
       {find: "@assets",
         replacement: path.resolve(__dirname, 'src/assets')
-      }
+      },
+      {find: "@contexts",
+        replacement: path.resolve(__dirname, 'src/contexts')
+      },
+      {find: "@games",
+        replacement: path.resolve(__dirname, 'src/pages/games')
+      },
+      
     ]
   }
 })
