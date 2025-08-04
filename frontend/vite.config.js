@@ -35,6 +35,9 @@ export default defineConfig({
       {find: "@games",
         replacement: path.resolve(__dirname, 'src/pages/games')
       },
+      {find: "@hooks",
+        replacement: path.resolve(__dirname, 'src/hooks')
+      }
       
     ]
   }

@@ -1,16 +1,5 @@
-import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
-
-// Create the context
-const AudioContext = createContext(null);
-
-// Custom hook to use the audio context
-export const useAudio = () => {
-  const context = useContext(AudioContext);
-  if (!context) {
-    throw new Error('useAudio must be used within an AudioProvider');
-  }
-  return context;
-};
+import React, { useState, useMemo, useCallback } from 'react';
+import { AudioContext } from './AudioContext';
 
 // Provider component
 export const AudioProvider = ({ children }) => {
@@ -68,3 +57,4 @@ export const AudioProvider = ({ children }) => {
     </AudioContext.Provider>
   );
 };
+

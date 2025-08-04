@@ -1,17 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { UserContext } from './UserContext';
 
 const USER_STORAGE_KEY = 'funGamesUsername';
 const API_BASE_URL = 'http://localhost:8000/api';
-
-const UserContext = createContext(null);
-
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
 
 export const UserProvider = ({ children }) => {
   const [username, setUsernameState] = useState(null);
