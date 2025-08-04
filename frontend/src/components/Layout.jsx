@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { useUser } from '../hooks/useUser';
+import { useUser } from '@hooks/useUser';
 
 const Layout = () => {
   const { username, isModalOpen, openUsernameModal, closeUsernameModal, setUsername, clearUsername } = useUser();
@@ -19,7 +19,7 @@ const Layout = () => {
   return (
     <>
       {/* Navigation */}
-      <nav className="navbar navbar-expand-lg navbar-dark">
+      <nav className="navbar navbar-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
             <i className="fas fa-gamepad"></i> FunGames

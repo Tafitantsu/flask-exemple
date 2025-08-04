@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Import Bootstrap CSS first
 import 'bootstrap/dist/css/bootstrap.min.css';
+// Import Bootstrap JS
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // Import custom styles
 import '@styles/index.css';
 
