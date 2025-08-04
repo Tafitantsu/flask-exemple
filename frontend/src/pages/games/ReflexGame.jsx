@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import ApiCall from '@utils/ApiCall';
 
 const ReflexGame = () => {
   const [gameState, setGameState] = useState('waiting'); // waiting, ready, active, done
@@ -37,12 +38,11 @@ const ReflexGame = () => {
       // Calculate score (inverse of reaction time, higher is better)
       const score = Math.round(50000 / timeTaken);
       // Send score to backend
-      fetch('http://localhost:8000/api/game/score', {
+      ApiCall('/game/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ game: 'reflex', score: score }),
       })
-        .then(response => response.json())
         .then(data => console.log('Reflex score saved:', data))
         .catch(error => console.error('Error saving reflex score:', error));
     }

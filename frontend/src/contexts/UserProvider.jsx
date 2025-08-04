@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { UserContext } from './UserContext';
 
 const USER_STORAGE_KEY = 'funGamesUsername';
-const API_BASE_URL = 'http://localhost:8000/api';
+import ApiCall from '@utils/ApiCall';
 
 export const UserProvider = ({ children }) => {
   const [username, setUsernameState] = useState(null);
@@ -11,8 +11,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/user`);
-        const data = await response.json();
+        const data = await ApiCall('/user');
         if (data.username) {
           setUsernameState(data.username);
           localStorage.setItem(USER_STORAGE_KEY, data.username);
@@ -37,7 +36,7 @@ export const UserProvider = ({ children }) => {
     if (name && name.trim()) {
       const trimmedName = name.trim();
       try {
-        await fetch(`${API_BASE_URL}/user`, {
+        await ApiCall('/user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: trimmedName }),
@@ -53,7 +52,7 @@ export const UserProvider = ({ children }) => {
 
   const clearUsername = useCallback(async () => {
     try {
-      await fetch(`${API_BASE_URL}/user`, { method: 'DELETE' });
+      await ApiCall('/user', { method: 'DELETE' });
       localStorage.removeItem(USER_STORAGE_KEY);
       setUsernameState(null);
     } catch (error) {

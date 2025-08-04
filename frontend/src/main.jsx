@@ -10,8 +10,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@styles/index.css';
 
 import App from './App.jsx';
-import { AudioProvider } from './contexts/AudioProvider';
-import { UserProvider } from './contexts/UserProvider';
+import { AudioProvider } from '@contexts/AudioProvider';
+import { UserProvider } from '@contexts/UserProvider';
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>

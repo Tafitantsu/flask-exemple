@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ApiCall from '../utils/ApiCall';
 
-const API_BASE_URL = 'http://localhost:8000/api';
 
 const gameNames = {
   clicker: 'Clicker Fou',
@@ -14,14 +14,12 @@ const DashboardPage = () => {
 
   useEffect(() => {
     // Fetch global stats
-    fetch(`${API_BASE_URL}/stats`)
-      .then(response => response.json())
+    ApiCall('/stats')
       .then(data => setStats(data))
       .catch(error => console.error('Error fetching stats:', error));
 
     // Fetch high scores
-    fetch(`${API_BASE_URL}/game/highscores`)
-      .then(response => response.json())
+    ApiCall('/game/highscores')
       .then(data => setHighScores(data))
       .catch(error => console.error('Error fetching high scores:', error));
   }, []);

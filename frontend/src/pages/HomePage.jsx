@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '@hooks/UseUser';
+import ApiCall from '@utils/ApiCall';
 
 const HomePage = () => {
   const { username, openUsernameModal } = useUser();
@@ -10,19 +11,17 @@ const HomePage = () => {
 
   useEffect(() => {
     // Increment visit count
-    fetch('http://localhost:8000/api/visit', { method: 'POST' })
+    ApiCall('/visit', { method: 'POST' })
       .then(() => {
         // Fetch stats from the backend
-        fetch('http://localhost:8000/api/stats') // Assuming the backend runs on port 8000
-          .then(response => response.json())
+        ApiCall('/stats')
           .then(data => setStats(data))
           .catch(error => console.error('Error fetching stats:', error));
       })
       .catch(error => console.error('Error incrementing visit count:', error));
 
     // Fetch a joke from the backend
-    fetch('http://localhost:8000/api/joke')
-      .then(response => response.json())
+    ApiCall('/joke')
       .then(data => setJoke(data.joke))
       .catch(error => console.error('Error fetching joke:', error));
 

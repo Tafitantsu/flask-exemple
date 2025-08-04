@@ -7,7 +7,7 @@ import DashboardPage from '@pages/DashboardPage';
 import GamesPage from '@pages/GamesPage';
 import ClickerGame from '@games/ClickerGame';
 import ReflexGame from '@games/ReflexGame';
-
+import ApiCall from '@utils/ApiCall';
 import TypingGame from '@games/TypingGame';
 
 function App() {

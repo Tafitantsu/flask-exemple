@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ApiCall from '@utils/ApiCall';
 
 const GAME_DURATION = 10; // secondes
 
@@ -42,7 +43,7 @@ const ClickerGame = () => {
     setGameActive(false);
     setShowResult(true);
 
-    fetch('http://localhost:8000/api/game/score', {
+    ApiCall('/game/score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ game: 'clicker', score }),

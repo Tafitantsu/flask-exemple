@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ApiCall from '@utils/ApiCall';
 
 const GAME_DURATION = 30; // seconds
 const WORDS = [
@@ -36,12 +37,11 @@ const TypingGame = () => {
     });
 
     // Send score to backend
-    fetch('http://localhost:8000/api/game/score', {
+    ApiCall('/game/score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ game: 'typing', score: FinalScore }),
     })
-      .then(response => response.json())
       .then(data => console.log('Typing score saved:', data))
       .catch(error => console.error('Error saving typing score:', error));
 
